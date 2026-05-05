@@ -1,57 +1,96 @@
 import { useState } from "react";
+import "leaflet/dist/leaflet.css";
+import "./styles.css";
+import RoleSelector from "./components/RoleSelector";
+import ResourceDashboard from "./components/ResourceDashboard";
 import CrisisForm from "./components/CrisisForm";
 import RecommendationCard from "./components/RecommendationCard";
+import RouteRecommendation from "./components/RouteRecommendation";
+import RouteMap from "./components/RouteMap";
 import WorkflowTrace from "./components/WorkflowTrace";
 import DecisionComparison from "./components/DecisionComparison";
 import AgentSuggestions from "./components/AgentSuggestions";
 import ExplainabilityBox from "./components/ExplainabilityBox";
 import History from "./components/History";
-import { runSimulation } from "./api";
-import "./styles.css";
+import { runSimulation, updateResources } from "./api";
+import { DEMO_RESOURCES } from "./demo";
 
 export default function App() {
+  const [role, setRole] = useState("Crisis Admin");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [demoLoading, setDemoLoading] = useState(false);
 
-  const handleSubmit = async (data) => {
+  const handleSimulate = async (data) => {
     setLoading(true);
     setError(null);
     setResult(null);
     try {
-      const res = await runSimulation(data);
-      setResult(res);
+      setResult(await runSimulation(data));
     } catch (err) {
       setError(err.message);
     }
     setLoading(false);
   };
 
-  const handleLoadHistory = (sim) => {
-    setResult(sim);
-    setError(null);
+  const handleLoadDemoResources = async () => {
+    setDemoLoading(true);
+    try {
+      for (const res of Object.values(DEMO_RESOURCES)) {
+        await updateResources(res);
+      }
+      setError(null);
+      alert("Demo resources loaded for all roles! Now run the simulation.");
+    } catch (err) {
+      setError(err.message);
+    }
+    setDemoLoading(false);
   };
 
   return (
     <div className="app">
       <header className="header">
         <h1 className="title">CrisisMind AI</h1>
-        <p className="subtitle">LangGraph-Based Multi-Agent Disaster Decision Simulator</p>
-        <p className="tagline">Simulate disaster. Compare actions. Predict outcomes. Explain the safest decision.</p>
+        <p className="subtitle">Role-Based LangGraph Disaster Response and Route Decision Simulator</p>
+        <p className="tagline">Simulate disaster. Track resources. Compare actions. Visualize routes. Choose the safest response.</p>
       </header>
 
       <main className="main">
-        <CrisisForm onSubmit={handleSubmit} loading={loading} />
+        <RoleSelector selected={role} onSelect={setRole} />
 
-        {error && (
-          <div className="card error-card">
-            <strong>❌ Error:</strong> {error}
-          </div>
+        {role !== "Crisis Admin" && <ResourceDashboard role={role} />}
+
+        {role === "Crisis Admin" && (
+          <>
+            <div className="card demo-resources-card">
+              <h2 className="section-title">⚡ Quick Setup</h2>
+              <p className="muted" style={{ marginBottom: "12px" }}>
+                Load demo resource data for all roles before running simulation, or ask each role officer to submit their updates.
+              </p>
+              <button className="btn-secondary" onClick={handleLoadDemoResources} disabled={demoLoading}>
+                {demoLoading ? "Loading..." : "📦 Load Demo Resources for All Roles"}
+              </button>
+            </div>
+
+            <CrisisForm onSubmit={handleSimulate} loading={loading} />
+          </>
         )}
+
+        {error && <div className="card error-card"><strong>Error:</strong> {error}</div>}
 
         {result && (
           <>
             <RecommendationCard result={result} />
+            <RouteMap
+              lat={result.latitude}
+              lng={result.longitude}
+              routes={result.route_options}
+              recommended={result.recommended_route}
+              disasterType={result.disaster_type}
+              location={result.location}
+            />
+            <RouteRecommendation routes={result.route_options} recommended={result.recommended_route} />
             <WorkflowTrace trace={result.workflow_trace} />
             <DecisionComparison paths={result.decision_paths} recommended={result.recommended_path} />
             <AgentSuggestions suggestions={result.agent_suggestions} />
@@ -63,11 +102,11 @@ export default function App() {
           </>
         )}
 
-        <History onLoad={handleLoadHistory} />
+        <History onLoad={(sim) => { setResult(sim); setError(null); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
       </main>
 
       <footer className="footer">
-        <p>Built with FastAPI + LangGraph + React | Hack Fusion 2025 | AI/ML Innovation Track</p>
+        <p>CrisisMind AI | FastAPI + LangGraph + React Leaflet | Hack Fusion 2025 | AI/ML Innovation Track</p>
       </footer>
     </div>
   );

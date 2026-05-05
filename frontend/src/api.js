@@ -10,6 +10,32 @@ export async function runSimulation(data) {
   return res.json();
 }
 
+export async function updateResources(data) {
+  const res = await fetch(`${BASE}/resources/update`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+export async function updateShelter(data) {
+  const res = await fetch(`${BASE}/shelters/update`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+export async function fetchResources() {
+  const res = await fetch(`${BASE}/resources`);
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
 export async function fetchHistory() {
   const res = await fetch(`${BASE}/history`);
   if (!res.ok) throw new Error(await res.text());

@@ -4,7 +4,9 @@ from typing import Optional, List, Any, Dict
 
 class DisasterInput(BaseModel):
     disaster_type: str = Field(..., example="Flood")
-    location: str = Field(..., example="Zone A")
+    location: str = Field(..., example="Hubballi - Varur Region")
+    latitude: float = Field(default=15.3647, example=15.3647)
+    longitude: float = Field(default=75.1240, example=75.1240)
     severity_level: int = Field(..., ge=0, le=100, example=80)
     affected_population: int = Field(..., example=20000)
     vulnerable_population: int = Field(..., example=5000)
@@ -18,51 +20,49 @@ class DisasterInput(BaseModel):
     budget_level: str = Field(..., example="Medium")
 
 
-class AgentSuggestion(BaseModel):
-    agent: str
-    suggestion: str
-    pros: List[str]
-    cons: List[str]
+class ResourceUpdate(BaseModel):
+    role: str
+    location: str
+    # Medical
+    doctors: Optional[int] = None
+    ambulances: Optional[int] = None
+    hospital_beds: Optional[int] = None
+    medical_camps: Optional[int] = None
+    first_aid_kits: Optional[int] = None
+    blood_units: Optional[int] = None
+    # Rescue
+    rescue_teams: Optional[int] = None
+    boats: Optional[int] = None
+    life_jackets: Optional[int] = None
+    ropes: Optional[int] = None
+    divers: Optional[int] = None
+    emergency_vehicles: Optional[int] = None
+    # Fire/Safety
+    firefighters: Optional[int] = None
+    fire_trucks: Optional[int] = None
+    safety_teams: Optional[int] = None
+    danger_zones: Optional[int] = None
+    # NGO
+    volunteers: Optional[int] = None
+    food_packets: Optional[int] = None
+    water_bottles: Optional[int] = None
+    clothes: Optional[int] = None
+    blankets: Optional[int] = None
+    # Transport
+    blocked_roads_count: Optional[int] = None
+    safe_roads: Optional[int] = None
+    damaged_bridges: Optional[int] = None
+    available_buses: Optional[int] = None
+    route_status: Optional[str] = None
 
 
-class DecisionPath(BaseModel):
-    path_id: str
+class ShelterUpdate(BaseModel):
     name: str
-    description: str
-    safety_score: float
-    speed_score: float
-    resource_score: float
-    cost_score: float
-    confidence_score: float
-    risk_score: float
-    success_probability: float
-    failure_probability: float
-    final_decision_score: float
-    rank: int
-    pros: List[str]
-    cons: List[str]
-
-
-class SimulationResponse(BaseModel):
-    simulation_id: str
-    disaster_type: str
     location: str
-    scenario_summary: str
-    generated_scenarios: List[str]
-    agent_suggestions: List[AgentSuggestion]
-    decision_paths: List[DecisionPath]
-    recommended_path: str
-    explanation: str
-    risk_level: str
-    workflow_trace: List[str]
-    created_at: str
-
-
-class SimulationHistoryItem(BaseModel):
-    simulation_id: str
-    disaster_type: str
-    location: str
-    recommended_path: str
-    final_score: float
-    risk_level: str
-    created_at: str
+    latitude: float
+    longitude: float
+    total_capacity: int
+    available_capacity: int
+    food_available: bool = True
+    water_available: bool = True
+    medical_support: bool = False

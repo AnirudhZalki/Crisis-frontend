@@ -1,9 +1,7 @@
-const AGENT_ICONS = {
-  "Medical Agent": "🏥",
-  "Rescue Agent": "🚒",
-  "Transport Agent": "🚌",
-  "Resource Agent": "📦",
-  "Safety Agent": "🛡️",
+const ICONS = {
+  "Medical Agent": "🏥", "Rescue Agent": "🚒", "Transport Agent": "🚌",
+  "Shelter Agent": "🏠", "NGO Agent": "🤝", "Fire & Safety Agent": "🔥",
+  "Resource Agent": "📦", "Safety Agent": "🛡️",
 };
 
 export default function AgentSuggestions({ suggestions }) {
@@ -14,17 +12,17 @@ export default function AgentSuggestions({ suggestions }) {
         {suggestions.map((s, i) => (
           <div key={i} className="agent-card">
             <div className="agent-header">
-              <span className="agent-icon">{AGENT_ICONS[s.agent] || "🔍"}</span>
+              <span className="agent-icon">{ICONS[s.agent] || "🔍"}</span>
               <strong>{s.agent}</strong>
             </div>
             <p className="agent-suggestion">{s.suggestion}</p>
             <div className="pros-cons">
               <div>
-                <strong className="pros-label">✅ Pros</strong>
+                <strong className="pros-label">Pros</strong>
                 <ul>{s.pros.map((p, j) => <li key={j}>{p}</li>)}</ul>
               </div>
               <div>
-                <strong className="cons-label">⚠ Cons</strong>
+                <strong className="cons-label">Cons</strong>
                 <ul>{s.cons.map((c, j) => <li key={j}>{c}</li>)}</ul>
               </div>
             </div>

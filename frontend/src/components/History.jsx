@@ -11,10 +11,7 @@ export default function History({ onLoad }) {
 
   const load = async () => {
     setLoading(true);
-    try {
-      const data = await fetchHistory();
-      setItems(data);
-    } catch (_) {}
+    try { setItems(await fetchHistory()); } catch (_) {}
     setLoading(false);
   };
 
@@ -35,18 +32,18 @@ export default function History({ onLoad }) {
         <button className="btn-ghost small" onClick={load}>↺ Refresh</button>
       </div>
       {loading && <p className="muted">Loading...</p>}
-      {!loading && items.length === 0 && <p className="muted">No simulations yet. Run your first simulation above.</p>}
+      {!loading && items.length === 0 && <p className="muted">No simulations yet.</p>}
       <div className="history-list">
-        {items.map((item) => (
+        {items.map(item => (
           <div key={item.simulation_id} className="history-item">
             <div className="history-info">
               <strong>{item.disaster_type}</strong> — {item.location}
-              <br />
-              <small className="muted">{new Date(item.created_at).toLocaleString()}</small>
+              <br /><small className="muted">{new Date(item.created_at).toLocaleString()}</small>
             </div>
             <div className="history-meta">
               <span className={`risk-badge ${riskClass(item.risk_level)}`}>{item.risk_level}</span>
               <span className="path-mini">Path {item.recommended_path}</span>
+              {item.recommended_route && <span className="path-mini">Route {item.recommended_route}</span>}
               <span className="score-mini">{item.final_score}/100</span>
               <button className="btn-ghost small" onClick={() => handleView(item.simulation_id)}>View</button>
             </div>
