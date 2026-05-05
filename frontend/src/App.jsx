@@ -1,8 +1,9 @@
 import { useState } from "react";
 import "leaflet/dist/leaflet.css";
 import "./styles.css";
+import { useAuth, ROLE_ICONS } from "./AuthContext";
+import LoginPage from "./components/LoginPage";
 import LLMStatus from "./components/LLMStatus";
-import RoleSelector from "./components/RoleSelector";
 import ResourceDashboard from "./components/ResourceDashboard";
 import CrisisForm from "./components/CrisisForm";
 import RecommendationCard from "./components/RecommendationCard";
@@ -14,20 +15,31 @@ import AgentSuggestions from "./components/AgentSuggestions";
 import ExplainabilityBox from "./components/ExplainabilityBox";
 import AIReport from "./components/AIReport";
 import History from "./components/History";
+import WhatIfPanel from "./components/WhatIfPanel";
+import HumanApproval from "./components/HumanApproval";
+import ScoreBreakdown from "./components/ScoreBreakdown";
+import ResourceFreshness from "./components/ResourceFreshness";
 import { runSimulation, updateResources } from "./api";
 import { DEMO_RESOURCES } from "./demo";
 
 export default function App() {
-  const [role, setRole] = useState("Crisis Admin");
+  const { user, logout } = useAuth();
   const [result, setResult] = useState(null);
+  const [lastInput, setLastInput] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [demoLoading, setDemoLoading] = useState(false);
+
+  // Not logged in → show login page
+  if (!user) return <LoginPage />;
+
+  const isAdmin = user.role === "Crisis Admin";
 
   const handleSimulate = async (data) => {
     setLoading(true);
     setError(null);
     setResult(null);
+    setLastInput(data);
     try {
       setResult(await runSimulation(data));
     } catch (err) {
@@ -63,14 +75,28 @@ export default function App() {
         <p className="subtitle">Role-Based LangGraph Disaster Response and Route Decision Simulator</p>
         <p className="tagline">Simulate disaster. Track resources. Compare actions. Visualize routes. Choose the safest response.</p>
         <LLMStatus />
+        {/* Logged-in user bar */}
+        <div className="auth-bar">
+          <span className="auth-role-pill">
+            {ROLE_ICONS[user.role]} &nbsp;<strong>{user.role}</strong>
+            {isAdmin && <span className="auth-admin-tag">ADMIN</span>}
+          </span>
+          <button className="auth-logout-btn" onClick={logout}>🚪 Logout</button>
+        </div>
       </header>
 
       <main className="main">
-        <RoleSelector selected={role} onSelect={setRole} />
 
-        {role !== "Crisis Admin" && <ResourceDashboard role={role} />}
+        {/* ── ROLE OFFICER VIEW ── only their resource update panel */}
+        {!isAdmin && (
+          <div className="role-restricted-banner">
+            <span>🔒 You are logged in as <strong>{user.role}</strong>. You can only update your department's resources below.</span>
+          </div>
+        )}
+        {!isAdmin && <ResourceDashboard role={user.role} />}
 
-        {role === "Crisis Admin" && (
+        {/* ── ADMIN VIEW ── full access */}
+        {isAdmin && (
           <>
             <div className="card demo-resources-card">
               <h2 className="section-title">⚡ Quick Setup</h2>
@@ -87,9 +113,11 @@ export default function App() {
 
         {error && <div className="card error-card"><strong>Error:</strong> {error}</div>}
 
-        {result && (
+        {/* ── SIMULATION RESULTS — admin only ── */}
+        {isAdmin && result && (
           <>
             <RecommendationCard result={result} />
+            <ResourceFreshness />
             <RouteMap
               lat={result.latitude}
               lng={result.longitude}
@@ -102,11 +130,20 @@ export default function App() {
             <RouteRecommendation routes={result.route_options} recommended={result.recommended_route} />
             <WorkflowTrace trace={result.workflow_trace} />
             <DecisionComparison paths={result.decision_paths} recommended={result.recommended_path} />
+            <ScoreBreakdown simulationId={result.simulation_id} />
             <AgentSuggestions suggestions={result.agent_suggestions} />
             <ExplainabilityBox
               explanation={result.explanation}
               scenarios={result.generated_scenarios}
               llmUsed={result.llm_used}
+            />
+            {lastInput && (
+              <WhatIfPanel originalInput={lastInput} simulationId={result.simulation_id} />
+            )}
+            <HumanApproval
+              simulationId={result.simulation_id}
+              recommendedPath={result.recommended_path}
+              recommendedRoute={result.recommended_route}
             />
             <AIReport simulationId={result.simulation_id} llmUsed={result.llm_used} />
             <div className="card scenario-card">
@@ -116,7 +153,7 @@ export default function App() {
           </>
         )}
 
-        <History onLoad={handleLoadHistory} />
+        {isAdmin && <History onLoad={handleLoadHistory} />}
       </main>
 
       <footer className="footer">

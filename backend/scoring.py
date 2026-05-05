@@ -127,3 +127,46 @@ def score_all_paths(d: dict) -> list:
         p["rank"] = i + 1
     path_map = {p["path_id"]: p for p in sorted_paths}
     return [path_map["A"], path_map["B"], path_map["C"]]
+
+
+def get_score_breakdown(d: dict) -> list:
+    """Return positive factors, negative factors, warnings for each path."""
+    base_risk = compute_risk_score(d)
+    confidence = compute_confidence_score(d)
+    paths = score_all_paths(d)
+    breakdowns = []
+    for p in paths:
+        positives, negatives, warnings = [], [], []
+        if p["safety_score"] >= 75:
+            positives.append(f"High Safety Score ({p['safety_score']}) — strong life protection")
+        elif p["safety_score"] < 55:
+            negatives.append(f"Low Safety Score ({p['safety_score']}) — higher casualty risk")
+        if p["resource_score"] >= 65:
+            positives.append(f"Good Resource Score ({p['resource_score']}) — adequate supplies")
+        elif p["resource_score"] < 50:
+            negatives.append(f"Low Resource Score ({p['resource_score']}) — resource pressure")
+        if p["speed_score"] >= 65:
+            positives.append(f"Good Speed Score ({p['speed_score']}) — timely response")
+        elif p["speed_score"] < 45:
+            negatives.append(f"Low Speed Score ({p['speed_score']}) — slow response risk")
+        if p["confidence_score"] >= 80:
+            positives.append(f"High Confidence ({p['confidence_score']}) — reliable prediction")
+        if p["risk_score"] >= 65:
+            warnings.append(f"High Risk Score ({p['risk_score']}) — dangerous conditions")
+        if p["failure_probability"] >= 40:
+            warnings.append(f"Failure Probability {p['failure_probability']}% — significant risk")
+        if d["blocked_roads"] >= 3:
+            warnings.append(f"{d['blocked_roads']} roads blocked — evacuation may be delayed")
+        if d["estimated_injured"] > d["hospital_capacity"]:
+            negatives.append(f"Hospital overload: {d['estimated_injured']} injured vs {d['hospital_capacity']} capacity")
+        if d["available_rescue_teams"] < d["required_rescue_teams"]:
+            negatives.append(f"Team shortage: {d['available_rescue_teams']} of {d['required_rescue_teams']} required")
+        breakdowns.append({
+            "path_id": p["path_id"],
+            "name": p["name"],
+            "final_score": p["final_decision_score"],
+            "positives": positives,
+            "negatives": negatives,
+            "warnings": warnings,
+        })
+    return breakdowns

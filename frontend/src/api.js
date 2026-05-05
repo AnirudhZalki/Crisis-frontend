@@ -63,3 +63,39 @@ export async function generateReport(simulation_id) {
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
+
+export async function runWhatIf(original_input, scenario) {
+  const res = await fetch(`${BASE}/whatif`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ original_input, scenario }),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+export async function approvePlan(simulation_id, action, officer_name, notes) {
+  const res = await fetch(`${BASE}/approve`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ simulation_id, action, officer_name, notes }),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+export async function fetchScoreBreakdown(simulation_id) {
+  const res = await fetch(`${BASE}/score/breakdown`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ simulation_id }),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+export async function fetchResourceFreshness() {
+  const res = await fetch(`${BASE}/resources/freshness`);
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}

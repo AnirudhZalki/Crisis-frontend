@@ -40,6 +40,7 @@ def run_simulation(input_data: dict) -> dict:
         "location": input_data["location"],
         "latitude": input_data.get("latitude", 15.3647),
         "longitude": input_data.get("longitude", 75.1240),
+        "input_data": input_data,
         "scenario_summary": final_state["scenario_summary"],
         "generated_scenarios": final_state["generated_scenarios"],
         "resource_summary": final_state["resource_data"],
