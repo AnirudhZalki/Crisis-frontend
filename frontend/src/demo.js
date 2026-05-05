@@ -1,0 +1,15 @@
+export const DEMO_SCENARIO = {
+  disaster_type: "Flood",
+  location: "Zone A - Riverside District",
+  severity_level: 80,
+  affected_population: 20000,
+  vulnerable_population: 5000,
+  available_rescue_teams: 12,
+  required_rescue_teams: 15,
+  hospital_capacity: 500,
+  estimated_injured: 700,
+  blocked_roads: 4,
+  weather_condition: "Heavy rainfall expected for 6 hours",
+  response_time_limit: 6,
+  budget_level: "Medium",
+};
