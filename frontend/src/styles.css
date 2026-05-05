@@ -201,3 +201,14 @@ small { color: var(--muted); font-size: 0.76rem; }
 .status-safe             { color: #3fb950; font-weight: 600; }
 .status-flooded          { color: #f85149; font-weight: 600; }
 .status-partially_blocked { color: #d29922; font-weight: 600; }
+
+/* ── Workflow Trace Upgrades ── */
+.trace-agent-badge { background: rgba(63,185,80,0.15); color: #3fb950; border: 1px solid #3fb950; border-radius: 20px; padding: 2px 10px; font-size: 0.72rem; font-weight: 700; margin-left: 8px; }
+.trace-util-badge  { background: rgba(88,166,255,0.12); color: #58a6ff; border: 1px solid #58a6ff; border-radius: 20px; padding: 2px 10px; font-size: 0.72rem; font-weight: 700; margin-left: 6px; }
+.trace-legend { display: flex; gap: 16px; margin-bottom: 12px; }
+.trace-legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: var(--muted); }
+.trace-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.agent-dot { background: #3fb950; }
+.util-dot  { background: #58a6ff; }
+.trace-node-agent { border-color: #3fb950 !important; color: #3fb950 !important; background: rgba(63,185,80,0.08) !important; }
+.trace-node-util  { border-color: #58a6ff !important; color: #58a6ff !important; background: rgba(88,166,255,0.06) !important; }
