@@ -174,3 +174,30 @@ tr:hover td { background: var(--surface2); }
 /* Misc */
 .muted { color: var(--muted); font-size: 0.84rem; }
 small { color: var(--muted); font-size: 0.76rem; }
+
+/* ── Map Tooltips ── */
+.map-tooltip-disaster { background: #f85149 !important; color: #fff !important; border: none !important; font-weight: 700 !important; font-size: 0.78rem !important; white-space: nowrap; }
+.map-tooltip-people   { background: #ff8c00 !important; color: #fff !important; border: none !important; font-weight: 600 !important; font-size: 0.75rem !important; white-space: nowrap; }
+.map-tooltip-shelter  { background: #3fb950 !important; color: #000 !important; border: none !important; font-weight: 600 !important; font-size: 0.75rem !important; white-space: nowrap; }
+.map-tooltip-selected { background: #1f6feb !important; color: #fff !important; border: 2px solid #58a6ff !important; font-size: 0.8rem !important; }
+.map-tooltip-route    { background: #21262d !important; color: #e6edf3 !important; border: 1px solid #30363d !important; font-size: 0.78rem !important; }
+
+/* Leaflet tooltip arrow fix */
+.leaflet-tooltip { border-radius: 6px !important; padding: 4px 8px !important; }
+
+/* ── Map Route Summary Pills ── */
+.map-route-summary { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.map-route-pill {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 14px; font-size: 0.8rem;
+}
+.map-route-pill-selected { border-color: #58a6ff; background: rgba(88,166,255,0.08); }
+.route-pill-id   { font-weight: 700; color: var(--primary); }
+.route-pill-name { color: var(--text); }
+.route-pill-dist { color: var(--muted); }
+.route-pill-score { color: var(--info); font-weight: 600; }
+.route-pill-best { background: #58a6ff; color: #000; border-radius: 4px; padding: 1px 8px; font-weight: 700; font-size: 0.72rem; }
+.status-safe             { color: #3fb950; font-weight: 600; }
+.status-flooded          { color: #f85149; font-weight: 600; }
+.status-partially_blocked { color: #d29922; font-weight: 600; }

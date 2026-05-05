@@ -89,6 +89,7 @@ export default function App() {
               recommended={result.recommended_route}
               disasterType={result.disaster_type}
               location={result.location}
+              affectedPopulation={result.decision_paths?.[0] ? 20000 : undefined}
             />
             <RouteRecommendation routes={result.route_options} recommended={result.recommended_route} />
             <WorkflowTrace trace={result.workflow_trace} />
