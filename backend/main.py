@@ -24,8 +24,8 @@ except ImportError:
 app = FastAPI(title="CrisisMind AI", version="2.0.0")
 
 allowed_origins = os.getenv(
-    "ALLOWED_ORIGINS",
-    "http://127.0.0.1:5173,http://localhost:5173"
+    "*",
+    "https://crisis-frontend-qu2a.onrender.com"
 ).split(",")
 allowed_origins = [origin.strip() for origin in allowed_origins if origin.strip()]
 
