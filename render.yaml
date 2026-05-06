@@ -7,6 +7,6 @@ services:
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: ALLOWED_ORIGINS
-        value: http://127.0.0.1:5173,http://localhost:5173
+        value: https://<your-vercel-app>.vercel.app
       - key: DATABASE_FILE
         value: crisismind.db
